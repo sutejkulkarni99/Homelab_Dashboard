@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Atheris Hub v2.0 - Master Server (OptiPlex)."""
+"""Polaris Hub v2.0 - Master Server (OptiPlex)."""
 import http.client, http.server, json, os, secrets, socket, sys, threading, time, urllib.request
 
-# Automatically load .env or master.env.example if present
-for env_file in [".env", "master.env", "master.env.example"]:
+# Automatically load .env, polaris.env, or master.env if present
+for env_file in [".env", "polaris.env", "polaris.env.example", "master.env", "master.env.example"]:
     if os.path.exists(env_file):
         try:
             with open(env_file, "r") as f:
@@ -59,7 +59,7 @@ def refresh_health():
         new_health = {}
         for svc in SERVICES:
             try:
-                req = urllib.request.Request(svc["url"], method="HEAD", headers={"User-Agent":"Atheris/2.0"})
+                req = urllib.request.Request(svc["url"], method="HEAD", headers={"User-Agent":"Polaris/2.0"})
                 with urllib.request.urlopen(req, timeout=2.0) as r:
                     new_health[svc["id"]] = 200 <= r.status < 500
             except urllib.error.HTTPError as e:
@@ -175,7 +175,7 @@ def docker_containers(sock="/var/run/docker.sock"):
 def wyse_metrics():
     try:
         req = urllib.request.Request(f"http://{WYSE_IP}:{WYSE_AGENT_PORT}/api/metrics",
-                                     headers={"User-Agent":"Atheris/2.0"})
+                                     headers={"User-Agent":"Polaris/2.0"})
         with urllib.request.urlopen(req, timeout=1.5) as r:
             if r.status == 200: return json.loads(r.read().decode())
     except Exception: pass
@@ -186,7 +186,7 @@ def cookie_token(headers):
     ck = headers.get("Cookie","")
     for c in ck.split(";"):
         c = c.strip()
-        if c.startswith("atheris_session="): return c.split("=",1)[1]
+        if c.startswith("polaris_session="): return c.split("=",1)[1]
     return None
 
 def authed(headers):
@@ -245,14 +245,14 @@ class H(http.server.BaseHTTPRequestHandler):
             if secrets.compare_digest(u,AUTH_USER) and secrets.compare_digest(pw,AUTH_PASS):
                 tok = secrets.token_urlsafe(32)
                 with SESSIONS_LOCK: SESSIONS[tok] = {"u":u,"exp":time.time()+SESSION_EXPIRY}
-                ck = f"atheris_session={tok}; Path=/; Max-Age={SESSION_EXPIRY}; HttpOnly; SameSite=Strict"
+                ck = f"polaris_session={tok}; Path=/; Max-Age={SESSION_EXPIRY}; HttpOnly; SameSite=Strict"
                 if COOKIE_SECURE: ck += "; Secure"
                 return self.j({"status":"ok"},200,[("Set-Cookie",ck)])
             return self.j({"error":"Invalid credentials"},401)
         if self.path == "/api/logout":
             t = cookie_token(self.headers)
             with SESSIONS_LOCK: SESSIONS.pop(t,None) if t else None
-            ck = "atheris_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict"
+            ck = "polaris_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict"
             return self.j({"status":"ok"},200,[("Set-Cookie",ck)])
         self.send_error(404)
 
@@ -284,7 +284,7 @@ class H(http.server.BaseHTTPRequestHandler):
 
 def main():
     threading.Thread(target=refresh_health, daemon=True).start()
-    print(f"[*] Atheris Master starting on {BIND_IP}:{PORT}")
+    print(f"[*] Polaris Master starting on {BIND_IP}:{PORT}")
     try:
         srv = http.server.ThreadingHTTPServer((BIND_IP, PORT), H)
     except Exception as e:

@@ -1,5 +1,5 @@
 {
-  "name": "Atheris Homelab Dashboard",
+  "name": "Polaris Homelab Dashboard",
   "description": "Unified, secure self-hosted dual-machine monitoring dashboard for Optiplex and Wyse homelab.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

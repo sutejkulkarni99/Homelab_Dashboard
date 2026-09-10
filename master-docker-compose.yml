@@ -1,8 +1,8 @@
-name: atheris-master
+name: polaris-master
 services:
   master:
     image: python:3.11-slim
-    container_name: atheris-master
+    container_name: polaris-master
     restart: unless-stopped
     network_mode: host
     working_dir: /app

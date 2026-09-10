@@ -1,8 +1,8 @@
-name: atheris-satellite
+name: polaris-satellite
 services:
   satellite:
     image: python:3.11-slim
-    container_name: atheris-satellite
+    container_name: polaris-satellite
     restart: unless-stopped
     network_mode: host
     working_dir: /app

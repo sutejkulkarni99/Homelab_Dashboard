@@ -3,9 +3,9 @@ set -euo pipefail
 
 WYSE_IP="${WYSE_IP:-100.119.157.55}"
 OPTIPLEX_IP="${OPTIPLEX_IP:-100.116.47.43}"
-M_PORT="${ATHERIS_PORT:-3030}"
-S_PORT="${ATHERIS_SATELLITE_PORT:-8001}"
-INSTALL_DIR="${ATHERIS_INSTALL_DIR:-$HOME/atheris-hub}"
+M_PORT="${POLARIS_PORT:-3030}"
+S_PORT="${POLARIS_SATELLITE_PORT:-8001}"
+INSTALL_DIR="${POLARIS_INSTALL_DIR:-$HOME/polaris-hub}"
 BACKUP_DIR="${INSTALL_DIR}.bak"
 
 G='\033[0;32m'; R='\033[0;31m'; Y='\033[0;33m'; C='\033[0;36m'; N='\033[0m'
@@ -17,7 +17,7 @@ die()  { err "$*"; exit 1; }
 
 show_help() {
 cat << 'HELPEOF'
-Atheris Hub v2.0 - Deploy Script
+Polaris Hub v2.0 - Deploy Script
 
 USAGE: bash deploy.sh [OPTIONS]
 
@@ -28,28 +28,28 @@ OPTIONS:
   -s, --satellite-port <n>  Satellite port          (default: 8001)
   -o, --optiplex-ip <ip>    OptiPlex Tailscale IP   (default: 100.116.47.43)
   -w, --wyse-ip <ip>        Wyse Tailscale IP       (default: 100.119.157.55)
-  -d, --dir <path>          Install directory       (default: ~/atheris-hub)
+  -d, --dir <path>          Install directory       (default: ~/polaris-hub)
   -h, --help                Show this help
 
 ENV VARS:
-  ATHERIS_USER, ATHERIS_PASS, ATHERIS_PORT,
-  ATHERIS_SATELLITE_PORT, OPTIPLEX_IP, WYSE_IP, ATHERIS_INSTALL_DIR
+  POLARIS_USER, POLARIS_PASS, POLARIS_PORT,
+  POLARIS_SATELLITE_PORT, OPTIPLEX_IP, WYSE_IP, POLARIS_INSTALL_DIR
 
 EXAMPLES:
   bash deploy.sh
   bash deploy.sh --user admin --pass 'Secret123' --port 8080
-  ATHERIS_PASS=Secret123 bash deploy.sh
+  POLARIS_PASS=Secret123 bash deploy.sh
 HELPEOF
 exit 0
 }
 
-ATHERIS_USER="${ATHERIS_USER:-}"
-ATHERIS_PASS="${ATHERIS_PASS:-}"
+POLARIS_USER="${POLARIS_USER:-}"
+POLARIS_PASS="${POLARIS_PASS:-}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -u|--user)           ATHERIS_USER="$2"; shift 2 ;;
-    -p|--pass)           ATHERIS_PASS="$2"; shift 2 ;;
+    -u|--user)           POLARIS_USER="$2"; shift 2 ;;
+    -p|--pass)           POLARIS_PASS="$2"; shift 2 ;;
     -P|--port)           M_PORT="$2"; shift 2 ;;
     -s|--satellite-port) S_PORT="$2"; shift 2 ;;
     -o|--optiplex-ip)    OPTIPLEX_IP="$2"; shift 2 ;;
@@ -63,23 +63,23 @@ done
 [ -f "master-server.py" ] || [ -f "master/server.py" ] || die "Run from repo root"
 
 echo "===================================================="
-echo "  Atheris Hub v2.0 - Deploy"
+echo "  Polaris Hub v2.0 - Deploy"
 echo "  Master:    $OPTIPLEX_IP:$M_PORT"
 echo "  Satellite: $WYSE_IP:$S_PORT"
 echo "  Install:   $INSTALL_DIR"
 echo "===================================================="
 echo ""
 
-if [ -z "$ATHERIS_USER" ]; then
-  read -p "Dashboard username [sutej]: " ATHERIS_USER < /dev/tty
-  ATHERIS_USER=${ATHERIS_USER:-sutej}
+if [ -z "$POLARIS_USER" ]; then
+  read -p "Dashboard username [sutej]: " POLARIS_USER < /dev/tty
+  POLARIS_USER=${POLARIS_USER:-sutej}
 fi
-if [ -z "$ATHERIS_PASS" ]; then
-  read -sp "Dashboard password: " ATHERIS_PASS < /dev/tty; echo ""
-  read -sp "Confirm password:   " ATHERIS_PASS2 < /dev/tty; echo ""
-  [ "$ATHERIS_PASS" != "$ATHERIS_PASS2" ] && die "Passwords do not match"
+if [ -z "$POLARIS_PASS" ]; then
+  read -sp "Dashboard password: " POLARIS_PASS < /dev/tty; echo ""
+  read -sp "Confirm password:   " POLARIS_PASS2 < /dev/tty; echo ""
+  [ "$POLARIS_PASS" != "$POLARIS_PASS2" ] && die "Passwords do not match"
 fi
-[ -z "$ATHERIS_PASS" ] && die "Password cannot be empty"
+[ -z "$POLARIS_PASS" ] && die "Password cannot be empty"
 
 info "Pre-flight checks..."
 for cmd in docker curl scp ssh openssl git; do
@@ -131,8 +131,8 @@ ok "Master installed + patched"
 info "Writing .env (mode 600)..."
 SECRET=$(openssl rand -hex 32)
 cat > "$INSTALL_DIR/master/.env" << ENVEOF
-AUTH_USER=${ATHERIS_USER}
-AUTH_PASS=${ATHERIS_PASS}
+AUTH_USER=${POLARIS_USER}
+AUTH_PASS=${POLARIS_PASS}
 BIND_IP=${OPTIPLEX_IP}
 PORT=${M_PORT}
 SESSION_SECRET=${SECRET}
@@ -146,25 +146,30 @@ chmod 600 "$INSTALL_DIR/master/.env"
 ok ".env written"
 
 info "Pushing satellite to Wyse..."
-ssh "sutej@${WYSE_IP}" "rm -rf ~/atheris-hub/satellite.bak; cp -r ~/atheris-hub/satellite ~/atheris-hub/satellite.bak 2>/dev/null || true; mkdir -p ~/atheris-hub/satellite"
-scp -q "$SAGENT" "sutej@${WYSE_IP}:~/atheris-hub/satellite/agent.py"
-[ -n "$SCOMPOSE" ] && scp -q "$SCOMPOSE" "sutej@${WYSE_IP}:~/atheris-hub/satellite/docker-compose.yml"
+ssh "sutej@${WYSE_IP}" "rm -rf ~/polaris-hub/satellite.bak; cp -r ~/polaris-hub/satellite ~/polaris-hub/satellite.bak 2>/dev/null || true; mkdir -p ~/polaris-hub/satellite"
+scp -q "$SAGENT" "sutej@${WYSE_IP}:~/polaris-hub/satellite/agent.py"
+[ -n "$SCOMPOSE" ] && scp -q "$SCOMPOSE" "sutej@${WYSE_IP}:~/polaris-hub/satellite/docker-compose.yml"
 ok "Satellite pushed"
 
-info "Restarting Master..."
+info "Cleaning up old atheris containers..."
+docker rm -f atheris-master 2>/dev/null || true
+ssh "sutej@${WYSE_IP}" "docker rm -f atheris-satellite 2>/dev/null || true"
+
+info "Restarting Polaris Master..."
 cd "$INSTALL_DIR/master"
 docker compose down 2>/dev/null || true
 docker compose up -d
-info "Restarting Satellite..."
-ssh "sutej@${WYSE_IP}" "cd ~/atheris-hub/satellite && docker compose down 2>/dev/null || true; docker compose up -d"
+
+info "Restarting Polaris Satellite..."
+ssh "sutej@${WYSE_IP}" "cd ~/polaris-hub/satellite && docker compose down 2>/dev/null || true; docker compose up -d"
 
 sleep 5
 echo ""
 echo "===================================================="
 echo "  Verification"
 echo "===================================================="
-docker ps --filter name=atheris --format "table {{.Names}}\t{{.Status}}"
-ssh "sutej@${WYSE_IP}" "docker ps --filter name=atheris --format 'table {{.Names}}\t{{.Status}}'"
+docker ps --filter name=polaris --format "table {{.Names}}\t{{.Status}}"
+ssh "sutej@${WYSE_IP}" "docker ps --filter name=polaris --format 'table {{.Names}}\t{{.Status}}'"
 echo ""
 MH=$(curl -s --max-time 5 "http://${OPTIPLEX_IP}:${M_PORT}/api/health" || echo FAILED)
 SH=$(curl -s --max-time 5 "http://${WYSE_IP}:${S_PORT}/api/health" || echo FAILED)
@@ -176,11 +181,11 @@ if [[ "$MH" == *ok* ]] && [[ "$SH" == *ok* ]]; then
   echo "===================================================="
   ok "DEPLOYMENT SUCCESSFUL"
   echo "   URL:      http://${OPTIPLEX_IP}:${M_PORT}"
-  echo "   Username: ${ATHERIS_USER}"
+  echo "   Username: ${POLARIS_USER}"
   echo "   Rollback: rm -rf $INSTALL_DIR && mv $BACKUP_DIR $INSTALL_DIR"
   echo "===================================================="
 else
   err "DEPLOYMENT INCOMPLETE"
-  docker logs atheris-master --tail 20 2>&1
+  docker logs polaris-master --tail 20 2>&1
   exit 1
 fi

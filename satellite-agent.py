@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Atheris Hub v2.0 - Satellite Agent (Wyse 5070)."""
+"""Polaris Hub v2.0 - Satellite Agent (Wyse 5070)."""
 import http.client, http.server, json, os, socket, time
 
 PORT      = int(os.environ.get("PORT", "8001"))
@@ -126,7 +126,7 @@ class H(http.server.BaseHTTPRequestHandler):
         self.send_error(404)
 
 def main():
-    print(f"[*] Atheris Satellite on {BIND_IP}:{PORT}")
+    print(f"[*] Polaris Satellite on {BIND_IP}:{PORT}")
     http.server.ThreadingHTTPServer((BIND_IP,PORT),H).serve_forever()
 
 if __name__ == "__main__": main()
