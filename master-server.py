@@ -3,7 +3,7 @@
 import http.client, http.server, json, os, secrets, socket, sys, threading, time, urllib.request
 
 # Automatically load .env, polaris.env, or master.env if present
-for env_file in [".env", "polaris.env", "polaris.env.example", "master.env", "master.env.example"]:
+for env_file in [".env", "polaris.env", "polaris.env", "master.env", "master.env"]:
     if os.path.exists(env_file):
         try:
             with open(env_file, "r") as f:
@@ -27,7 +27,7 @@ OPTIPLEX_IP       = os.environ.get("OPTIPLEX_IP", "100.116.47.43")
 WYSE_IP           = os.environ.get("WYSE_IP", "100.119.157.55")
 WYSE_AGENT_PORT   = os.environ.get("WYSE_AGENT_PORT", "8001")
 AUTH_USER         = os.environ.get("AUTH_USER", "sutej")
-AUTH_PASS         = os.environ.get("AUTH_PASS", "sutej123")
+AUTH_PASS         = os.environ.get("AUTH_PASS", "")
 SESSION_SECRET    = os.environ.get("SESSION_SECRET") or secrets.token_urlsafe(32)
 SESSION_EXPIRY    = int(os.environ.get("SESSION_EXPIRY_DAYS", "7")) * 86400
 COOKIE_SECURE     = os.environ.get("COOKIE_SECURE", "false").lower() == "true"
@@ -46,8 +46,10 @@ SERVICES = [
     {"id":"stirling","cat":"AI & Dev Studio","name":"Stirling-PDF","url":"http://100.116.47.43:8070","desc":"PDF Toolkit","icon":"📄"},
     {"id":"romm","cat":"Retro Gaming","name":"ROMM","url":"http://100.119.157.55:3040","desc":"ROM Manager","icon":"🎮"},
     {"id":"gamehub","cat":"Retro Gaming","name":"Game Hub","url":"http://100.119.157.55:8085","desc":"Retro Launcher","icon":"🕹️"},
-    {"id":"cockpit","cat":"System Admin","name":"Cockpit","url":"https://cockpit-sutej.duckdns.org","desc":"Fedora Admin","icon":"⚙️"},
-    {"id":"portainer","cat":"System Admin","name":"Portainer","url":"https://100.116.47.43:9443","desc":"Docker GUI","icon":"🐳"},
+    {"id":"cockpit","cat":"System Admin","name":"Cockpit (OptiPlex)","url":"https://cockpit-sutej.duckdns.org","desc":"Fedora Admin","icon":"⚙️"},
+    {"id":"cockpit-wyse","cat":"System Admin","name":"Cockpit (Wyse)","url":"http://100.119.157.55:9090","desc":"Wyse System Admin","icon":"⚙️"},
+    {"id":"portainer","cat":"System Admin","name":"Portainer (OptiPlex)","url":"https://100.116.47.43:9443","desc":"Docker GUI","icon":"🐳"},
+    {"id":"portainer-wyse","cat":"System Admin","name":"Portainer (Wyse)","url":"https://100.119.157.55:9443","desc":"Wyse Docker GUI","icon":"🐳"},
     {"id":"npm","cat":"System Admin","name":"Nginx Proxy Manager","url":"http://100.116.47.43:81","desc":"SSL & Proxy","icon":"🛡️"},
 ]
 
