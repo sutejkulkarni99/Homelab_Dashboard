@@ -1,0 +1,10 @@
+{
+  "name": "atheris-homelab-dashboard",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "dev": "python3 master-server.py",
+    "start": "python3 master-server.py",
+    "build": "echo 'Atheris Hub v2.0 - Pure Python + Vanilla HTML/JS'"
+  }
+}

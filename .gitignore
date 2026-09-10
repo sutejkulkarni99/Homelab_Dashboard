@@ -1,0 +1,14 @@
+# Security & Local Config
+.env
+.env.local
+*.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/

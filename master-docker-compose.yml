@@ -1,0 +1,16 @@
+name: atheris-master
+services:
+  master:
+    image: python:3.11-slim
+    container_name: atheris-master
+    restart: unless-stopped
+    network_mode: host
+    working_dir: /app
+    command: python3 /app/server.py
+    env_file: .env
+    volumes:
+      - ./server.py:/app/server.py:ro
+      - ./html:/app/html:ro
+      - /proc:/host/proc:ro
+      - /:/host_root:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
