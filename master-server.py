@@ -238,6 +238,20 @@ class H(http.server.BaseHTTPRequestHandler):
         except FileNotFoundError:
             self.send_error(404)
 
+    def serve_file(self, filename, content_type):
+        path = find_file(filename)
+        try:
+            with open(path, "rb") as f: b = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(b)))
+            self.send_header("Cache-Control", "public, max-age=86400")
+            self.send_header("Connection", "close")
+            self.end_headers()
+            self.wfile.write(b)
+        except FileNotFoundError:
+            self.send_error(404)
+
     def do_POST(self):
         if self.path == "/api/login":
             n = int(self.headers.get("Content-Length",0))
@@ -261,6 +275,16 @@ class H(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/health":
             return self.j({"status":"ok"})
+
+        if self.path in ("/manifest.json", "/manifest.webmanifest"):
+            return self.serve_file("manifest.json", "application/manifest+json")
+        if self.path in ("/sw.js", "/service-worker.js"):
+            return self.serve_file("sw.js", "application/javascript")
+        if self.path in ("/apple-touch-icon.png", "/pwa-192x192.png", "/pwa-512x512.png", "/pwa-maskable-512x512.png", "/favicon.ico", "/icon.svg"):
+            fname = self.path.lstrip("/")
+            ctype = "image/svg+xml" if fname.endswith(".svg") else "image/png"
+            if fname == "favicon.ico": ctype = "image/x-icon"
+            return self.serve_file(fname, ctype)
 
         if self.path in ("/","/index.html","/login.html"):
             if authed(self.headers):

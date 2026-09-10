@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#05070E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PolarisHub">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <title>Polaris Hub - Dashboard</title>
 <style>
 :root {
@@ -392,9 +400,72 @@ main { position: relative; z-index: 10; padding: 2rem; max-width: 1400px; margin
   -webkit-backdrop-filter: blur(12px);
 }
 
-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
-th { text-align: left; padding: .6rem .85rem; color: var(--mt); border-bottom: 1px solid var(--bd); font-weight: 600; letter-spacing: 0.5px; }
-td { padding: .75rem .85rem; border-bottom: 1px solid #121828; }
+.tbl-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bd) transparent;
+}
+
+.tbl-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tbl-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tbl-wrap::-webkit-scrollbar-thumb {
+  background: var(--bd);
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+
+th {
+  text-align: left;
+  padding: .65rem .85rem;
+  color: var(--mt);
+  border-bottom: 1px solid var(--bd);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+td {
+  padding: .75rem .85rem;
+  border-bottom: 1px solid #121828;
+  white-space: nowrap;
+}
+
+.btn-pwa {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(125, 211, 252, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  color: var(--aurora);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-pwa:hover {
+  background: rgba(125, 211, 252, 0.22);
+  border-color: rgba(125, 211, 252, 0.5);
+  box-shadow: 0 0 12px rgba(125, 211, 252, 0.25);
+  transform: translateY(-1px);
+}
 
 .sp { display: inline-flex; align-items: center; gap: .35rem; padding: 2px 8px; border-radius: 12px; font-size: .72rem; font-weight: 600; }
 .pr { background: rgba(74, 222, 128, 0.12); color: var(--gn); border: 1px solid rgba(74, 222, 128, 0.25); }
@@ -404,13 +475,87 @@ td { padding: .75rem .85rem; border-bottom: 1px solid #121828; }
 .btn-retry { background: rgba(248, 113, 113, 0.15); border: 1px solid rgba(248, 113, 113, 0.3); color: var(--rd); padding: 3px 8px; border-radius: 6px; font-size: .72rem; font-weight: 700; cursor: pointer; transition: background .2s; }
 .btn-retry:hover { background: rgba(248, 113, 113, 0.3); }
 
+/* Footer Styling */
+footer {
+  margin-top: 3rem;
+  padding: 1.75rem 1rem;
+  border-top: 1px solid var(--bd);
+  background: rgba(10, 13, 26, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 14px 14px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.ft-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.ft-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--mt);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(14, 18, 32, 0.6);
+  border: 1px solid var(--bd);
+  transition: all 0.25s ease;
+}
+
+.ft-link:hover {
+  color: var(--aurora);
+  border-color: rgba(125, 211, 252, 0.4);
+  background: rgba(125, 211, 252, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(125, 211, 252, 0.15);
+}
+
+.ft-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.ft-copy {
+  font-size: 0.82rem;
+  color: var(--mt);
+  letter-spacing: 0.3px;
+}
+
+.ft-copy span {
+  color: var(--star);
+  font-weight: 600;
+}
+
+.ft-tagline {
+  font-size: 0.72rem;
+  color: rgba(139, 148, 173, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 @media(max-width:768px) {
-  main { padding: 1rem; }
+  main { padding: 0.85rem; }
   .ng { grid-template-columns: 1fr; }
   .mg { grid-template-columns: 1fr; }
   header { flex-direction: column; gap: .75rem; align-items: flex-start; }
-  .sh-bar { flex-direction: column; align-items: flex-start; }
+  .hr { flex-wrap: wrap; width: 100%; justify-content: flex-start; gap: 0.5rem; }
+  .sh-bar { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .s-search { width: 100%; }
   .s-search input { width: 100%; }
+  .sb { padding: 0.85rem; margin-top: 1.25rem; overflow: hidden; }
+  footer { margin-top: 2rem; padding: 1.25rem 0.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -433,6 +578,10 @@ td { padding: .75rem .85rem; border-bottom: 1px solid #121828; }
     <div class="tt">PolarisHub <span>DUAL-NODE V2.0</span></div>
   </div>
   <div class="hr">
+    <button class="btn-pwa" id="pwa-btn" onclick="installPWA()" title="Install Polaris Hub App">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Install App
+    </button>
     <div class="ts" id="ts-pill" onclick="toggleTsPop()">
       <div class="pd"></div> Tailscale Connected
     </div>
@@ -514,21 +663,47 @@ td { padding: .75rem .85rem; border-bottom: 1px solid #121828; }
       <input type="text" id="ct-query" placeholder="Search containers..." oninput="renderCTFiltered()"><kbd>Ctrl+K</kbd>
     </div>
   </div>
-  <table>
-    <thead>
-      <tr>
-        <th>NODE</th>
-        <th>CONTAINER</th>
-        <th>IMAGE</th>
-        <th>PORTS</th>
-        <th>STATUS</th>
-      </tr>
-    </thead>
-    <tbody id="ctb">
-      <tr><td colspan="5" style="text-align:center;color:var(--mt)">Loading metrics...</td></tr>
-    </tbody>
-  </table>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>NODE</th>
+          <th>CONTAINER</th>
+          <th>IMAGE</th>
+          <th>PORTS</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="ctb">
+        <tr><td colspan="5" style="text-align:center;color:var(--mt)">Loading metrics...</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<!-- Professional Footer -->
+<footer>
+  <div class="ft-links">
+    <a href="https://github.com/sutejkulkarni99" target="_blank" rel="noopener noreferrer" class="ft-link" title="GitHub Repository & Profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+    <a href="https://linkedin.com/in/sutej-kulkarni" target="_blank" rel="noopener noreferrer" class="ft-link" title="LinkedIn Profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+      </svg>
+      LinkedIn
+    </a>
+  </div>
+  <div class="ft-copy">
+    © 2026 <span>Sutej Kulkarni</span> • Polaris Hub v2.0
+  </div>
+  <div class="ft-tagline">
+    Dual-Node Infrastructure • Tailscale Mesh Secured
+  </div>
+</footer>
 </main>
 
 <script>
@@ -751,6 +926,44 @@ function renderCTFiltered() {
 
 setInterval(fetchM, 5000);
 fetchM();
+
+// PWA Service Worker Registration & Installation Prompt Handler
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('[Polaris PWA] SW registered:', reg.scope))
+      .catch(err => console.log('[Polaris PWA] SW registration failed:', err));
+  });
+}
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const pwaBtn = $('pwa-btn');
+  if (pwaBtn) pwaBtn.style.display = 'inline-flex';
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        console.log('[Polaris PWA] App installed');
+      }
+      deferredPrompt = null;
+      const pwaBtn = $('pwa-btn');
+      if (pwaBtn) pwaBtn.style.display = 'none';
+    });
+  } else if (/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase())) {
+    alert('To install Polaris Hub on iOS:\n1. Tap the Share button in Safari.\n2. Select "Add to Home Screen".');
+  }
+}
+
+window.addEventListener('appinstalled', () => {
+  const pwaBtn = $('pwa-btn');
+  if (pwaBtn) pwaBtn.style.display = 'none';
+});
 </script>
 </body>
 </html>
