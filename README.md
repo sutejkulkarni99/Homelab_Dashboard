@@ -145,6 +145,54 @@ docker compose up -d
 
 ---
 
+## Quick Redeploy (One Command)
+
+After pushing changes from AI Studio to GitHub, run this single command on **OptiPlex** to deploy to both machines:
+
+```bash
+cd /tmp && rm -rf atheris-src && git clone https://github.com/sutejkulkarni99/Homelab_Dashboard.git atheris-src && cd atheris-src && bash deploy.sh
+```
+
+**What it does:**
+1. Clones the latest code from GitHub
+2. Prompts for username and password
+3. Backs up the current install to `~/atheris-hub.bak`
+4. Installs the new master files to OptiPlex
+5. Pushes the new satellite files to Wyse
+6. Restarts both containers
+7. Verifies health on both nodes
+
+**Scope:** This command is tailored for the **OptiPlex + Wyse pair** with their fixed Tailscale IPs (`100.116.47.43` and `100.119.157.55`). It is not a universal installer.
+
+### Deploy With Custom Values
+
+```bash
+cd /tmp && rm -rf atheris-src && git clone https://github.com/sutejkulkarni99/Homelab_Dashboard.git atheris-src && cd atheris-src && bash deploy.sh --user admin --pass "YourStrongPass" --port 3030
+```
+
+### Rollback After a Bad Deploy
+
+```bash
+rm -rf ~/atheris-hub && mv ~/atheris-hub.bak ~/atheris-hub
+cd ~/atheris-hub/master && docker compose up -d
+ssh sutej@100.119.157.55 "rm -rf ~/atheris-hub/satellite && mv ~/atheris-hub/satellite.bak ~/atheris-hub/satellite && cd ~/atheris-hub/satellite && docker compose up -d"
+```
+```
+
+---
+
+### 📝 How to Insert It
+
+1. Open your README on GitHub
+2. Click the **pencil icon** to edit
+3. Scroll down and find the line that says `## License`
+4. Place your cursor **just before** that line
+5. Paste the block above
+6. Verify there's a blank line between your new section and `## License`
+7. Commit changes
+
+The three backtick fences will render properly as separate code blocks — no formatting issues.
+
 ## 📄 License
 
 Distributed under the [MIT License](LICENSE).
