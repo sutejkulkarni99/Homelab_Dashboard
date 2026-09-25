@@ -124,4 +124,4 @@ Old v2.0 code preserved in legacy/.
 
 ## License
 
-Personal project. No license.
+MIT License - see [LICENSE](LICENSE) file.
