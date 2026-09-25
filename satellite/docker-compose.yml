@@ -1,0 +1,18 @@
+name: polaris-satellite
+services:
+  satellite:
+    image: python:3.11-slim
+    container_name: polaris-satellite
+    restart: unless-stopped
+    network_mode: host
+    working_dir: /app
+    command: python3 /app/agent.py
+    environment:
+      - PORT=8001
+      - BIND_IP=100.119.157.55
+      - NODE_NAME=Wyse 5070
+    volumes:
+      - ./agent.py:/app/agent.py:ro
+      - /proc:/host/proc:ro
+      - /:/host_root:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro

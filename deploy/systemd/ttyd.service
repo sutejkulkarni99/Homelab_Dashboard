@@ -1,0 +1,12 @@
+[Unit]
+Description=ttyd - Web terminal for Polaris
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ttyd --writable --port 7681 --interface 100.116.47.43 --credential sutej:CityStar_8970 bash -l
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

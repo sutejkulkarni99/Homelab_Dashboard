@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polaris Hub - Projects</title>
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #0f1730;
+    --card: rgba(14, 18, 32, 0.75);
+    --card-hover: rgba(18, 24, 42, 0.85);
+    --border: rgba(120, 140, 200, 0.15);
+    --text: #e4e9f5;
+    --muted: #8b96b0;
+    --accent: #f0c987;
+    --accent2: #7ee0c9;
+    --red: #ff6b6b;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(ellipse at top, #1a1f3a 0%, #0a0f1e 50%, #050810 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto 20px;
+    padding: 12px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+  }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+  .header h1 span { color: var(--accent); }
+  .nav { display: flex; gap: 10px; }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .nav a:hover { color: var(--accent); background: rgba(240, 201, 135, 0.08); }
+  .status-bar {
+    max-width: 1400px;
+    margin: 0 auto 16px;
+    padding: 12px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    backdrop-filter: blur(12px);
+  }
+  .status-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--muted);
+    box-shadow: 0 0 8px currentColor;
+  }
+  .status-dot.idle { background: var(--muted); }
+  .status-dot.running { background: var(--yellow); animation: pulse 1.2s infinite; }
+  .status-dot.done { background: var(--green); }
+  .status-dot.failed { background: var(--red); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  .grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+  }
+  .panel h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+  select {
+    width: 100%;
+    padding: 11px 12px;
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--accent); }
+  .row { display: flex; gap: 10px; margin-top: 14px; }
+  button {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #f0c987, #d4a86b);
+    color: #1a1206;
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .file-drop {
+    margin-top: 10px;
+    padding: 20px;
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .file-drop:hover, .file-drop.drag { border-color: var(--accent); color: var(--accent); background: rgba(240, 201, 135, 0.04); }
+  .history { max-height: 72vh; overflow-y: auto; }
+  .history-item {
+    padding: 14px;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .history-item:hover { background: var(--card-hover); border-left-color: var(--accent); }
+  .history-item.running { border-left-color: var(--yellow); }
+  .history-item.done { border-left-color: var(--green); }
+  .history-item.failed { border-left-color: var(--red); }
+  .history-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.running { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+  .badge.done { background: rgba(74, 222, 128, 0.12); color: var(--green); }
+  .badge.failed { background: rgba(255, 107, 107, 0.15); color: var(--red); }
+  .badge.model { background: rgba(126, 224, 201, 0.1); color: var(--accent2); }
+  .history-prompt {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 60px;
+    overflow: hidden;
+    position: relative;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .modal.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal-content {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    max-width: 900px;
+    width: 100%;
+    padding: 24px;
+    position: relative;
+  }
+  .modal-content pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 16px;
+    border-radius: 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text);
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-top: 12px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .modal-close:hover { background: rgba(255, 107, 107, 0.15); color: var(--red); }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 40px 20px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 13px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.2s;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: var(--red); color: var(--red); }
+  .toast.success { border-color: var(--green); color: var(--green); }
+</style>
+<script>(function(){const of=window.fetch.bind(window);window.fetch=function(i,init){init=init||{};const u=typeof i==="string"?i:(i&&i.url)||"";const m=(init.method||"GET").toUpperCase();if(u.startsWith("/")&&(m==="POST"||m==="PUT"||m==="DELETE")){const ck=document.cookie.split("; ").find(r=>r.startsWith("csrf_token="));if(ck){const v=decodeURIComponent(ck.split("=").slice(1).join("="));if(!init.headers)init.headers={};if(init.headers instanceof Headers)init.headers.set("X-CSRF-Token",v);else init.headers["X-CSRF-Token"]=v;}}return of(i,init);};})();</script></head>
+<body>
+<div class="header">
+  <h1>Polaris <span>Projects</span></h1>
+  <div class="nav">
+    <a href="/">Dashboard</a>
+    <a href="/ssh" style="color:#7ee0c9;margin-right:14px;text-decoration:none;font-weight:600;">SSH</a><a href="/logout" onclick="event.preventDefault();fetch('/api/logout').then(()=>location.href='/login')">Logout</a>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="status-dot idle" id="status-dot"></div>
+  <div id="status-text">Checking status...</div>
+</div>
+
+<div class="grid">
+  <div class="panel">
+    <h2>New Task</h2>
+    <textarea id="prompt" placeholder="Describe what Claude should do..."></textarea>
+    <select id="model">
+      <option>loading...</option>
+    </select>
+    <div class="row">
+      <button class="btn-primary" id="submit-btn" onclick="submitPrompt()">Submit Task</button>
+      <button class="btn-secondary" onclick="document.getElementById('file-input').click()">Upload .md</button>
+    </div>
+    <div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()">
+      Drag .md file here or click to browse
+    </div>
+    <input type="file" id="file-input" accept=".md" style="display:none" onchange="uploadFile(this.files[0])">
+  </div>
+
+  <div class="panel">
+    <h2>History</h2>
+    <div class="history" id="history">
+      <div class="empty">No tasks yet</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">x</button>
+    <h2 id="modal-title" style="color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;">Result</h2>
+    <pre id="modal-body"></pre>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentTask = null;
+let lastHistoryCount = 0;
+
+async function fetchModels() {
+  try {
+    const r = await fetch('/api/models');
+    const d = await r.json();
+    const sel = document.getElementById('model');
+    sel.innerHTML = '';
+    for (const m of d.models) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = m;
+      if (m === 'fast') opt.selected = true;
+      sel.appendChild(opt);
+    }
+  } catch (e) {
+    toast('Failed to load models', 'error');
+  }
+}
+
+async function fetchStatus() {
+  try {
+    const r = await fetch('/api/status');
+    const d = await r.json();
+    const dot = document.getElementById('status-dot');
+    const text = document.getElementById('status-text');
+    const state = d.state || 'idle';
+    dot.className = 'status-dot ' + state;
+    if (state === 'running') {
+      text.innerHTML = '<strong>' + d.task + '</strong> running on <em>' + d.model + '</em> - started ' + (d.started || '');
+    } else if (state === 'done') {
+      text.textContent = 'Idle - last task completed in ' + d.duration_s + 's';
+    } else if (state === 'failed') {
+      text.textContent = 'Idle - last task failed after ' + d.duration_s + 's';
+    } else {
+      text.textContent = 'Idle - no task running';
+    }
+  } catch (e) {}
+}
+
+async function fetchHistory() {
+  try {
+    const r = await fetch('/api/history');
+    const d = await r.json();
+    const items = d.items || [];
+    if (items.length === lastHistoryCount) return;
+    lastHistoryCount = items.length;
+    const el = document.getElementById('history');
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">No tasks yet</div>';
+      return;
+    }
+    el.innerHTML = items.map(it => {
+      const status = it.status || 'unknown';
+      const prompt = (it.prompt || it.task_file || '(no preview)').slice(0, 200);
+      const date = (it.started || '').slice(0, 16).replace('T', ' ');
+      return '<div class="history-item ' + status + '" onclick="openResult(\'' + it.task_id + '\', \'' + (it.task_file || '').replace(/'/g, '') + '\')">' +
+        '<div class="history-meta">' +
+          '<span class="badge ' + status + '">' + status + '</span>' +
+          '<span class="badge model">' + (it.model || '?') + '</span>' +
+          '<span>' + date + '</span>' +
+          (it.duration_s ? '<span>' + it.duration_s + 's</span>' : '') +
+        '</div>' +
+        '<div class="history-prompt">' + escapeHtml(prompt) + '</div>' +
+      '</div>';
+    }).join('');
+  } catch (e) {}
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+async function submitPrompt() {
+  const btn = document.getElementById('submit-btn');
+  const prompt = document.getElementById('prompt').value.trim();
+  const model = document.getElementById('model').value;
+  if (!prompt) { toast('Prompt is empty', 'error'); return; }
+  if (!model) { toast('Select a model', 'error'); return; }
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  try {
+    const r = await fetch('/api/prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, model })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast('Task queued: ' + d.task_id, 'success');
+      document.getElementById('prompt').value = '';
+      lastHistoryCount = -1;
+      setTimeout(fetchHistory, 1000);
+    } else {
+      toast(d.error || 'Failed', 'error');
+    }
+  } catch (e) {
+    toast('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Submit Task';
+  }
+}
+
+async function uploadFile(file) {
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const r = await fetch('/api/upload', { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.ok) {
+      toast('Uploaded: ' + d.task_id, 'success');
+      lastHistoryCount = -1;
+      setTimeout(fetchHistory, 1000);
+    } else {
+      toast(d.error || 'Upload failed', 'error');
+    }
+  } catch (e) {
+    toast('Upload error: ' + e.message, 'error');
+  }
+}
+
+async function openResult(taskId, taskFile) {
+  try {
+    const slug = taskFile.replace(/\.md$/, '');
+    const r = await fetch('/api/result/' + encodeURIComponent(slug));
+    const d = await r.json();
+    const body = d.ok ? d.content : ('Error: ' + (d.error || 'unknown'));
+    document.getElementById('modal-title').textContent = slug;
+    document.getElementById('modal-body').textContent = body;
+    document.getElementById('modal').classList.add('open');
+  } catch (e) {
+    toast('Failed to load result', 'error');
+  }
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+let toastTimer;
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Drag and drop
+const drop = document.getElementById('file-drop');
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+drop.addEventListener('drop', e => { if (e.dataTransfer.files[0]) uploadFile(e.dataTransfer.files[0]); });
+
+// Escape closes modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Init + polling
+fetchModels();
+fetchStatus();
+fetchHistory();
+setInterval(fetchStatus, 2000);
+setInterval(fetchHistory, 5000);
+</script>
+</body>
+</html>
