@@ -4,14 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/sutej/polaris-hub/master
+WorkingDirectory=%INSTALL_DIR%/master
+EnvironmentFile=%INSTALL_DIR%/master/.env
 Environment=POLARIS_PORT=3030
-Environment=AUTH_USER=sutej
-Environment=AUTH_PASS=CityStar_8970
-Environment=SESSION_SECRET=daf29fff29cbff401f7b2612b75db24e5af7a00cc829a6964b5c860c95dd22e0
-Environment=SESSION_SECRET=daf29fff29cbff401f7b2612b75db24e5af7a00cc829a6964b5c860c95dd22e0
-Environment=POLARIS_PROJECTS_DIR=/home/sutej/Projects
-ExecStart=/home/sutej/polaris-hub/master/.venv-staging/bin/python /home/sutej/polaris-hub/master/app_new.py
+Environment=POLARIS_PROJECTS_DIR=%h/Projects
+ExecStart=%INSTALL_DIR%/master/.venv-staging/bin/python %INSTALL_DIR%/master/app_new.py
 Restart=on-failure
 RestartSec=5
 

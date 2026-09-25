@@ -1,10 +1,10 @@
 [Unit]
-Description=ttyd - Web terminal for Polaris
+Description=ttyd — Web terminal for Polaris
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ttyd --writable --port 7681 --interface 100.116.47.43 --credential sutej:CityStar_8970 bash -l
+ExecStart=/usr/local/bin/ttyd -i /tmp/ttyd.sock -H X-WEBAUTH-USER bash -l
 Restart=on-failure
 RestartSec=5
 
